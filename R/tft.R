@@ -1,4 +1,6 @@
 require(R6)
+require(glue)
+require(httr)
 
 tft_league_master <- "/tft/league/v1/master"
 tft_league_grandmaster <- "/tft/league/v1/grandmaster"
@@ -11,22 +13,8 @@ get_data <- function(URL, api) {
   GET(URL, query = list(api_key = api))
 }
 
-
-tft <- R6Class(
-  classname = "tft",
-  public = list(
-    baseURL = NULL,
-    master =
-
-    # Initialize class
-    initialize = function(baseURL, api) {
-      stopifnot(is.character(baseURL), length(baseURL) == 1)
-
-      self$baseURL <- baseURL
-    }
-  )
-)
-
+# ==== R6 Classes ==== #
+# ---- RiotAPI ---- #
 RiotAPI <- R6Class(
   classname = "RiotAPI",
   public = list(
@@ -38,14 +26,37 @@ RiotAPI <- R6Class(
       self$api <- api
       self$dry_run <- dry_run
       self$baseURL <- glue("https://{region}.api.riotgames.com")
-      self$tft <- tft$new(self$baseURL, self$api)
+      self$tft <- TFT$new(self$baseURL, self$api)
     }
   ),
   lock_objects = FALSE
 )
 
-b <- RiotAPI$new('123', 'oc1')
-b$baseURL
-b$tft$master()
+# ---- TFT ---- #
+TFT <- R6Class(
+  classname = "TFT",
+  public = list(
+    baseURL = NULL,
+    api = NULL,
+    master = function() get_data(glue("{self$baseURL}{master_endpoint}"), self$api),
+    grandmaster = function() get_data(glue("{self$baseURL}{grandmaster_endpoint}"), self$api),
+    # Initialize class
+    initialize = function(baseURL, api) {
+      self$baseURL <- baseURL
+      self$api <- api
+    }
+  ),
+  private = list(
+    master_endpoint = tft_league_master,
+    grandmaster_endpoint = tft_league_grandmaster,
+    challenger_endpoint = tft_league_challenger,
+    by_summoner_endpoint = tft_league_by_summoner,
+    by_tier_endpoint = tft_league_by_tier,
+    by_id_endpoint = tft_league_by_id
+  )
+)
 
+b <- RiotAPI$new('RGAPI-ed01c315-58a8-40c9-b851-a48f22189215', 'oc1')
+a <- b$tft$master()
+a$content(type = "json")
 
