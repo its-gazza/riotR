@@ -1,62 +1,180 @@
 require(R6)
-require(glue)
 require(httr)
+require(glue)
 
-tft_league_master <- "/tft/league/v1/master"
-tft_league_grandmaster <- "/tft/league/v1/grandmaster"
-tft_league_challenger <- "/tft/league/v1/challenger"
-tft_league_by_summoner <- "/tft/league/v1/entries/by-summoner/{encryptedSummonerId}"
-tft_league_by_tier <- "/tft/league/v1/entries/{tier}/{division}"
-tft_league_by_id <- "/tft/league/v1/leagues/{leagueId}"
-
-get_data <- function(URL, api) {
-  GET(URL, query = list(api_key = api))
-}
-
-# ==== R6 Classes ==== #
-# ---- RiotAPI ---- #
-RiotAPI <- R6Class(
-  classname = "RiotAPI",
+# ==== TFT API ==== #
+tft <- R6::R6Class(
+  classname = "tft",
   public = list(
-    baseURL = "https://{region}.api.riotgames.com",
-    region = NULL,
+    # ---- Initialize Variables ---- #
+    api = NA,
+    region = NA,
+    dry_run = FALSE,
+    league = NULL,
 
+    # ---- Constructor ---- #
     initialize = function(api, region, dry_run = FALSE) {
+      self$api <- api
       self$region <- region
-      self$api <- api
-      self$dry_run <- dry_run
-      self$baseURL <- glue("https://{region}.api.riotgames.com")
-      self$tft <- TFT$new(self$baseURL, self$api)
-    }
-  ),
-  lock_objects = FALSE
-)
+      self$dry_run <- FALSE
+      self$league <- tft_league$new(api = self$api,region = self$region,dry_run = self$dry_run)
+      self$match <- tft_match$new(api = self$api,region = self$region,dry_run = self$dry_run)
+    },
 
-# ---- TFT ---- #
-TFT <- R6Class(
-  classname = "TFT",
-  public = list(
-    baseURL = NULL,
-    api = NULL,
-    master = function() get_data(glue("{self$baseURL}{master_endpoint}"), self$api),
-    grandmaster = function() get_data(glue("{self$baseURL}{grandmaster_endpoint}"), self$api),
-    # Initialize class
-    initialize = function(baseURL, api) {
-      self$baseURL <- baseURL
-      self$api <- api
+    # ---- Methods ---- #
+    match = function() {
+      NULL
+    },
+    summoner = function() {
+      NULL
+    },
+
+    # ---- Print ---- #
+    print = function(...) {
+      print(self$api)
+      print(self$region)
+      print(self$dry_run)
     }
   ),
+
   private = list(
-    master_endpoint = tft_league_master,
-    grandmaster_endpoint = tft_league_grandmaster,
-    challenger_endpoint = tft_league_challenger,
-    by_summoner_endpoint = tft_league_by_summoner,
-    by_tier_endpoint = tft_league_by_tier,
-    by_id_endpoint = tft_league_by_id
+    base_url = "https://{region}.api.riotgames.com"
   )
 )
 
-b <- RiotAPI$new('RGAPI-ed01c315-58a8-40c9-b851-a48f22189215', 'oc1')
-a <- b$tft$master()
-a$content(type = "json")
 
+# ==== TFT League End Points ==== #
+tft_league <- R6::R6Class(
+  classname = "tft_league",
+  public = list(
+    # ---- Initialize Variables ---- #
+    api = NA,
+    region = NA,
+    dry_run = FALSE,
+
+    # ---- Constructor ---- #
+    initialize = function(api, region, dry_run) {
+      self$api <- api
+      self$region <- region
+      self$dry_run <- dry_run
+    },
+
+    # ---- Methods ---- #
+    # Challenger ====
+    challenger = function(region = self$region) {
+      url <- private$glue_url(path = "/challenger", region = region)
+      return(url)
+    },
+
+    # Grandmaster ====
+    grandmaster = function(region = self$region) {
+      url <- private$glue_url(path = "/grandmaster", region = region)
+      return(url)
+    },
+
+    # Master ====
+    master = function(region = self$region) {
+      url <- private$glue_url(path = "/master", region = region)
+      return(url)
+    },
+
+    # Search by summoner ====
+    by_summoner = function(encryptedSummonerId = NULL, region = self$region) {
+      url <- private$glue_url(
+        path = glue::glue("/entries/by-summoner/{encryptedSummonerId}"),
+        region = region
+      )
+      return(url)
+    },
+
+    # Search by tier ====
+    by_tier = function(tier = NULL, division = NULL, region = self$region) {
+      url <- private$glue_url(
+        path = glue::glue("/tft/league/v1/entries/{tier}/{division}"),
+        region = region
+      )
+
+      return(url)
+    },
+
+    # Search by leagueId ====
+    by_leagueId = function(leagueId, region = self$region) {
+      url <- private$glue_url(
+        path = glue::glue("/tft/league/v1/leagues/{leagueId}"),
+        region = region
+      )
+      return(url)
+    }
+  ),
+
+  # ---- Private Methods ---- #
+  private = list(
+    base_url = "https://{region}.api.riotgames.com/tft/league/v1/challenge",
+
+    # Glue URL
+    glue_url = function(path, region = self$region) {
+      url <- httr::modify_url(
+        url = glue::glue(private$base_url),
+        path = glue::glue(path),
+        query = list(api_key = self$api)
+      )
+
+      return(url)
+    }
+  )
+)
+
+
+# ==== TFT Match End Points ==== #
+tft_match <- R6::R6Class(
+  classname = "tft_match",
+  public = list(
+    # ---- Initialize Variables ---- #
+    api = NA,
+    region = NA,
+    dry_run = FALSE,
+
+    # ---- Constructor ---- #
+    initialize = function(api, region, dry_run) {
+      self$api <- api
+      self$region <- region
+      self$dry_run <- dry_run
+    },
+
+    # ---- Methods ---- #
+    # Search by tier ====
+    by_puuid = function(puuid, region = self$region) {
+      url <- private$glue_url(
+        path = glue::glue("/tft/match/v1/matches/by-puuid/{puuid}/ids"),
+        region = region
+      )
+      return(url)
+    },
+
+    # Search by match ID
+    by_matchId = function(matchId, region = self$region) {
+      url <- private$glue_url(
+        path = glue::glue("/tft/match/v1/matches/{matchId}"),
+        region = region
+      )
+
+      return(url)
+    }
+  ),
+
+  # ---- Private Methods ---- #
+  private = list(
+    base_url = "https://{region}.api.riotgames.com/tft/league/v1/challenge",
+
+    # Glue URL
+    glue_url = function(path, region = self$region) {
+      url <- httr::modify_url(
+        url = glue::glue(private$base_url),
+        path = glue::glue(path),
+        query = list(api_key = self$api)
+      )
+
+      return(url)
+    }
+  )
+)
