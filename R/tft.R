@@ -6,7 +6,8 @@ require(glue)
 #' @title R6 Class for Teamfight Tactics end point (TFT)
 #'
 #' @description R6 class to access the Teamfight Tactics API. This class is
-#'   base on the different API
+#'   base on the different API path as illustrated in the Riot API website.
+#'
 #' @exportClass tft
 #' @export
 tft <- R6::R6Class(
@@ -57,16 +58,31 @@ tft <- R6::R6Class(
 
 
 # ==== TFT League End Points ==== #
-#
+#' @title TFT League End Point R6 class
+#'
+#' @description Sub class for [tft] to access [TFT-LEAGUE-V1](https://developer.riotgames.com/apis#tft-league-v1)
+#'   end points.
+#'
+#' @exportClass tft_league
+#' @export
 tft_league <- R6::R6Class(
   classname = "tft_league",
   public = list(
     # ---- Initialize Variables ---- #
+    #' @field api Riot API
     api = NA,
+    #' @field region API region, acceptable values: BR1, EUN1, EUW1, JP1, KR, LA1, LA2, NA1, OC1, TR1, RU
     region = NA,
+    #' @field dry_run If true all end point call will return glued URL
     dry_run = FALSE,
 
     # ---- Constructor ---- #
+    #' @description
+    #' Create a new tft object
+    #' @param api Riot API
+    #' @param region Access region
+    #' @param dry_run Whether to call API
+    #' @return A new `tft` object
     initialize = function(api, region, dry_run) {
       self$api <- api
       self$region <- region
@@ -75,27 +91,44 @@ tft_league <- R6::R6Class(
 
     # ---- Methods ---- #
     # Challenger ====
+    #' @description
+    #' Get challenger league.
+    #' For more info see [here](https://developer.riotgames.com/apis#tft-league-v1/GET_getChallengerLeague)
+    #'
+    #' @param region Region to query. Default to class's region. Can overwrite.
     challenger = function(region = self$region) {
       url <- private$glue_url(path = "/challenger", region = region)
       return(url)
     },
 
     # Grandmaster ====
+    #' @description
+    #' Get grandmaster league.
+    #' For more info see [here](https://developer.riotgames.com/apis#tft-league-v1/GET_getGrandmasterLeague)
+    #'
+    #' @param region Region to query. Default to class's region. Can overwrite.
     grandmaster = function(region = self$region) {
       url <- private$glue_url(path = "/grandmaster", region = region)
       return(url)
     },
 
     # Master ====
+    #' @description
+    #' Get master league.
+    #' For more info see [here](https://developer.riotgames.com/apis#tft-league-v1/GET_getMasterLeague)
+    #'
+    #' @param region Region to query. Default to class's region. Can overwrite.
     master = function(region = self$region) {
       url <- private$glue_url(path = "/master", region = region)
       return(url)
     },
 
     # Search by summoner ====
-    by_summoner = function(encryptedSummonerId = NULL, region = self$region) {
+    #' @description
+    #' Search client by
+    by_summoner = function(summonerName = NULL, region = self$region) {
       url <- private$glue_url(
-        path = glue::glue("/entries/by-summoner/{encryptedSummonerId}"),
+        path = glue::glue("/entries/by-summoner/{summonerName}"),
         region = region
       )
       return(url)
