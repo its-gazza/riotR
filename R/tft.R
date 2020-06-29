@@ -2,6 +2,8 @@ require(R6)
 require(httr)
 require(glue)
 
+source("misc.R")
+
 # ==== TFT API ==== #
 #' @title R6 Class for Teamfight Tactics end point (TFT)
 #'
@@ -38,9 +40,9 @@ tft <- R6::R6Class(
       self$api <- api
       self$region <- region
       self$dry_run <- FALSE
-      self$league <- tft_league$new(api = self$api,region = self$region,dry_run = self$dry_run)
-      self$match <- tft_match$new(api = self$api,region = self$region,dry_run = self$dry_run)
-      self$summoner <- tft_summoner$new(api = self$api,region = self$region,dry_run = self$dry_run)
+      self$league <- tft_league$new(api = self$api, region = self$region, dry_run = self$dry_run)
+      self$match <- tft_match$new(api = self$api, region = self$region, dry_run = self$dry_run)
+      self$summoner <- tft_summoner$new(api = self$api, region = self$region, dry_run = self$dry_run)
     },
 
     # ---- Print ---- #
@@ -97,7 +99,9 @@ tft_league <- R6::R6Class(
     #'
     #' @param region Region to query. Default to class's region. Can overwrite.
     challenger = function(region = self$region) {
-      url <- private$glue_url(path = "/challenger", region = region)
+      url <- glue_url(
+        path = "challenger",
+        api = self$api)
       return(url)
     },
 
@@ -108,7 +112,10 @@ tft_league <- R6::R6Class(
     #'
     #' @param region Region to query. Default to class's region. Can overwrite.
     grandmaster = function(region = self$region) {
-      url <- private$glue_url(path = "/grandmaster", region = region)
+      url <- glue_url(
+        path = "{private$base_url}/grandmaster",
+        api = self$api
+      )
       return(url)
     },
 
@@ -119,7 +126,10 @@ tft_league <- R6::R6Class(
     #'
     #' @param region Region to query. Default to class's region. Can overwrite.
     master = function(region = self$region) {
-      url <- private$glue_url(path = "/master", region = region)
+      url <- glue_url(
+        path = "{private$base_url}/master",
+        api = self$api
+      )
       return(url)
     },
 
@@ -127,18 +137,18 @@ tft_league <- R6::R6Class(
     #' @description
     #' Search client by
     by_summoner = function(summonerName = NULL, region = self$region) {
-      url <- private$glue_url(
-        path = glue::glue("/entries/by-summoner/{summonerName}"),
-        region = region
+      url <- glue_url(
+        path = glue::glue("{private$base_url}/entries/by-summoner/{summonerName}"),
+        api = self$api
       )
       return(url)
     },
 
     # Search by tier ====
     by_tier = function(tier = NULL, division = NULL, region = self$region) {
-      url <- private$glue_url(
-        path = glue::glue("/tft/league/v1/entries/{tier}/{division}"),
-        region = region
+      url <- glue_url(
+        path = glue::glue("{private$base_url}/entries/{tier}/{division}"),
+        api = self$api
       )
 
       return(url)
@@ -146,9 +156,9 @@ tft_league <- R6::R6Class(
 
     # Search by leagueId ====
     by_leagueId = function(leagueId, region = self$region) {
-      url <- private$glue_url(
-        path = glue::glue("/tft/league/v1/leagues/{leagueId}"),
-        region = region
+      url <- glue_url(
+        path = glue::glue("{private$base_url}/leagues/{leagueId}"),
+        api = self$api
       )
       return(url)
     }
@@ -156,18 +166,8 @@ tft_league <- R6::R6Class(
 
   # ---- Private Methods ---- #
   private = list(
-    base_url = "https://{region}.api.riotgames.com/tft/league/v1/challenge",
+    base_url = "https://{region}.api.riotgames.com/tft/league/v1"
 
-    # Glue URL
-    glue_url = function(path, region = self$region) {
-      url <- httr::modify_url(
-        url = glue::glue(private$base_url),
-        path = glue::glue(path),
-        query = list(api_key = self$api)
-      )
-
-      return(url)
-    }
   )
 )
 
@@ -190,18 +190,18 @@ tft_match <- R6::R6Class(
     # ---- Methods ---- #
     # Search by tier ====
     by_puuid = function(puuid, region = self$region) {
-      url <- private$glue_url(
-        path = glue::glue("/tft/match/v1/matches/by-puuid/{puuid}/ids"),
-        region = region
+      url <- glue_url(
+        path = glue::glue("{private$base_url}/by-puuid/{puuid}/ids"),
+        api = self$api
       )
       return(url)
     },
 
     # Search by match ID
     by_matchId = function(matchId, region = self$region) {
-      url <- private$glue_url(
-        path = glue::glue("/tft/match/v1/matches/{matchId}"),
-        region = region
+      url <- glue_url(
+        path = glue::glue("{private$base_url}/{matchId}"),
+        api = self$api
       )
 
       return(url)
@@ -210,18 +210,7 @@ tft_match <- R6::R6Class(
 
   # ---- Private Methods ---- #
   private = list(
-    base_url = "https://{region}.api.riotgames.com/tft/league/v1/challenge",
-
-    # Glue URL
-    glue_url = function(path, region = self$region) {
-      url <- httr::modify_url(
-        url = glue::glue(private$base_url),
-        path = glue::glue(path),
-        query = list(api_key = self$api)
-      )
-
-      return(url)
-    }
+    base_url = "https://{region}.api.riotgames.com/tft/league/v1/matches"
   )
 )
 
@@ -244,36 +233,37 @@ tft_summoner <- R6::R6Class(
     # ---- Methods ---- #
     # Search by account id ====
     by_account = function(encryptedAccountId, region = self$region) {
-      url <- private$glue_url(
-        path = glue::glue("/tft/summoner/v1/summoners/by-account/{encryptedAccountId}"),
-        region = region
+      url <- glue_url(
+        url = glue::glue("{private$base_url}/by-account/{encryptedAccountId}") %>% glue,
+        api = self$api
       )
       return(url)
     },
 
     # Search by summoner name
     by_name = function(summonerName, region = self$region) {
-      url <- private$glue_url(
-        path = glue::glue("/tft/summoner/v1/summoners/by-name/{summonerName}"),
-        region = region
+      base_url <- glue::glue("{private$base_url}")
+      url <- glue_url(
+        url = glue::glue("{private$base_url}/by-name/{summonerName}") %>% glue,
+        api = self$api
       )
       return(url)
     },
 
     # Sarch by puuid
     by_puuid = function(encryptedPUUID, region = self$region) {
-      url <- private$glue_url(
-        path = glue::glue("/tft/summoner/v1/summoners/by-puuid/{encryptedPUUID}"),
-        region = region
+      url <- glue_url(
+        url = glue::glue("{private$base_url}/by-puuid/{encryptedPUUID}") %>% glue,
+        api = self$api
       )
       return(url)
     },
 
     # Search by summoner id
     by_summonerId = function(encryptedSummonerId, region = self$region) {
-      url <- private$glue_url(
-        path = glue::glue("/tft/summoner/v1/summoners/{encryptedSummonerId}"),
-        region = region
+      url <- glue_url(
+        url = glue::glue("{private$base_url}/{encryptedSummonerId}") %>% glue,
+        api = self$api
       )
       return(url)
     }
@@ -281,17 +271,6 @@ tft_summoner <- R6::R6Class(
 
   # ---- Private Methods ---- #
   private = list(
-    base_url = "https://{region}.api.riotgames.com/tft/league/v1/challenge",
-
-    # Glue URL
-    glue_url = function(path, region = self$region) {
-      url <- httr::modify_url(
-        url = glue::glue(private$base_url),
-        path = glue::glue(path),
-        query = list(api_key = self$api)
-      )
-
-      return(url)
-    }
+    base_url = "https://{region}.api.riotgames.com/tft/summoner/v1/summoners"
   )
 )
