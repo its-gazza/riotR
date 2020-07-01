@@ -4,9 +4,8 @@
 \alias{tft}
 \title{R6 Class for Teamfight Tactics end point (TFT)}
 \description{
-R6 Class for Teamfight Tactics end point (TFT)
-
-R6 Class for Teamfight Tactics end point (TFT)
+R6 class to access the Teamfight Tactics API. This class is
+  base on the different API path as illustrated in the Riot API website.
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}

@@ -2,7 +2,7 @@ require(R6)
 require(httr)
 require(glue)
 
-source("misc.R")
+source("R/misc.R")
 
 # ==== TFT API ==== #
 #' @title R6 Class for Teamfight Tactics end point (TFT)
@@ -51,10 +51,6 @@ tft <- R6::R6Class(
       print(self$region)
       print(self$dry_run)
     }
-  ),
-
-  private = list(
-    base_url = "https://{region}.api.riotgames.com"
   )
 )
 
@@ -100,7 +96,7 @@ tft_league <- R6::R6Class(
     #' @param region Region to query. Default to class's region. Can overwrite.
     challenger = function(region = self$region) {
       url <- glue_url(
-        path = "challenger",
+        url = "{private$base_url}/challenger",
         api = self$api)
       return(url)
     },
@@ -113,7 +109,7 @@ tft_league <- R6::R6Class(
     #' @param region Region to query. Default to class's region. Can overwrite.
     grandmaster = function(region = self$region) {
       url <- glue_url(
-        path = "{private$base_url}/grandmaster",
+        url = "{private$base_url}/grandmaster",
         api = self$api
       )
       return(url)
@@ -127,7 +123,7 @@ tft_league <- R6::R6Class(
     #' @param region Region to query. Default to class's region. Can overwrite.
     master = function(region = self$region) {
       url <- glue_url(
-        path = "{private$base_url}/master",
+        url = "{private$base_url}/master",
         api = self$api
       )
       return(url)
@@ -138,7 +134,7 @@ tft_league <- R6::R6Class(
     #' Search client by
     by_summoner = function(summonerName = NULL, region = self$region) {
       url <- glue_url(
-        path = glue::glue("{private$base_url}/entries/by-summoner/{summonerName}"),
+        url = glue::glue("{private$base_url}/entries/by-summoner/{summonerName}") %>% glue,
         api = self$api
       )
       return(url)
@@ -147,7 +143,7 @@ tft_league <- R6::R6Class(
     # Search by tier ====
     by_tier = function(tier = NULL, division = NULL, region = self$region) {
       url <- glue_url(
-        path = glue::glue("{private$base_url}/entries/{tier}/{division}"),
+        url = glue::glue("{private$base_url}/entries/{tier}/{division}") %>% glue,
         api = self$api
       )
 
@@ -157,7 +153,7 @@ tft_league <- R6::R6Class(
     # Search by leagueId ====
     by_leagueId = function(leagueId, region = self$region) {
       url <- glue_url(
-        path = glue::glue("{private$base_url}/leagues/{leagueId}"),
+        url = glue::glue("{private$base_url}/leagues/{leagueId}") %>% glue,
         api = self$api
       )
       return(url)
@@ -190,8 +186,9 @@ tft_match <- R6::R6Class(
     # ---- Methods ---- #
     # Search by tier ====
     by_puuid = function(puuid, region = self$region) {
+      region <- route_tft(region)
       url <- glue_url(
-        path = glue::glue("{private$base_url}/by-puuid/{puuid}/ids"),
+        url = glue::glue("{private$base_url}/by-puuid/{puuid}/ids") %>% glue,
         api = self$api
       )
       return(url)
@@ -199,9 +196,11 @@ tft_match <- R6::R6Class(
 
     # Search by match ID
     by_matchId = function(matchId, region = self$region) {
+      region <- route_tft(region)
       url <- glue_url(
-        path = glue::glue("{private$base_url}/{matchId}"),
-        api = self$api
+        url = glue::glue("{private$base_url}/{matchId}") %>% glue,
+        api = self$api,
+        region = region
       )
 
       return(url)
