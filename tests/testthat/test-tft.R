@@ -10,7 +10,7 @@ if (SUMMONER_NAME == "" | SUMMONER_PUUID == "" | SUMMONER_ACCOUNT == "") {
 
 context("TFT")
 test_that("Summoner", {
-  tft <- RiotR::tft$new(api = RIOT_API, region = "oc1")
+  tft <- riotR::tft$new(api = RIOT_API, region = "oc1")
 
   # By account
   account <- tft$summoner$by_account(SUMMONER_ACCOUNT)
@@ -31,7 +31,7 @@ test_that("Summoner", {
 
 
 test_that("Match", {
-  tft <- RiotR::tft$new(api = RIOT_API, region = "oc1")
+  tft <- riotR::tft$new(api = RIOT_API, region = "oc1")
 
   # By puuid
   puuid <- tft$match$by_puuid(SUMMONER_PUUID)
@@ -46,7 +46,7 @@ test_that("Match", {
 
 
 test_that("League", {
-  tft <- RiotR::tft$new(api = RIOT_API, region = "oc1")
+  tft <- riotR::tft$new(api = RIOT_API, region = "oc1")
 
   # By grandmaster
   grandmaster <- tft$league$grandmaster()

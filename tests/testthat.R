@@ -1,4 +1,4 @@
 library(testthat)
-library(RiotR)
+library(riotR)
 
-test_check("RiotR")
+test_check("riotR")
