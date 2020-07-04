@@ -74,6 +74,7 @@ jobs:
 
       - name: Test
         run: devtools::test()
+        shell: Rscript {0}
 
       - name: Upload check results
         if: failure()
