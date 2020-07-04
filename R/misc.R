@@ -113,6 +113,16 @@ check_queue <- function(queue) {
 }
 
 
-
-
-
+#' Check if api key is valid
+#'
+#' @param api Riot API
+#'
+#' @export
+check_api <- function(api) {
+  data <- GET(glue::glue("https://oc1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key={api}"))
+  if (data$status_code != 200) {
+    return(FALSE)
+  } else {
+    return(TRUE)
+  }
+}
