@@ -20,7 +20,7 @@ get_url = function(url, api, dry_run = FALSE) {
   }
 
   if (data$status_code != 200) {
-    msg <- content(data)$status$message
+    msg <- httr::content(data)$status$message
     status_code <- data$status_code
 
     output <- glue::glue("GET error: {msg} (Status Code: {status_code}, URL: {url})")
@@ -119,7 +119,7 @@ check_queue <- function(queue) {
 #'
 #' @export
 check_api <- function(api) {
-  data <- GET(glue::glue("https://oc1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key={api}"))
+  data <- httr::GET(glue::glue("https://oc1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key={api}"))
   if (data$status_code != 200) {
     return(FALSE)
   } else {
