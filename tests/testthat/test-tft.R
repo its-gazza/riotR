@@ -8,6 +8,11 @@ if (SUMMONER_NAME == "" | SUMMONER_PUUID == "" | SUMMONER_ACCOUNT == "") {
   skip("One of the variable is missing")
 }
 
+if(!riotR::check_api(RIOT_API)) {
+  skip("Invalid API")
+}
+
+
 context("TFT")
 test_that("Summoner", {
   tft <- riotR::tft$new(api = RIOT_API, region = "oc1")
