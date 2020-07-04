@@ -8,7 +8,7 @@
 #' @export
 get_url = function(url, api, dry_run = FALSE) {
   url <- httr::modify_url(
-    url = glue(url),
+    url = glue::glue(url),
     query = list(api_key = api)
   ) %>%
     stringr::str_replace_all(" ", "+")
@@ -16,7 +16,17 @@ get_url = function(url, api, dry_run = FALSE) {
   if (dry_run) {
     return(url)
   } else {
-    df <- httr::GET(url)
+    data <- httr::GET(url)
+  }
+
+  if (data$status_code != 200) {
+    msg <- content(data)$status$message
+    status_code <- data$status_code
+
+    output <- glue::glue("GET error: {msg} (Status Code: {status_code}, URL: {url})")
+    return(output)
+  } else {
+    return(data)
   }
 }
 
@@ -27,11 +37,11 @@ get_url = function(url, api, dry_run = FALSE) {
 #' @export
 route_tft <- function(region) {
   region <- tolower(region)
-  if (str_detect(region, "(oc)|(na)|(br)|(la)|(las)")) {
+  if (stringr::str_detect(region, "(oc)|(na)|(br)|(la)|(las)")) {
     output <- "americas"
-  } else if (str_detect(region, "(kr)|(jp)")) {
+  } else if (stringr::str_detect(region, "(kr)|(jp)")) {
     output <- "asia"
-  } else if (str_detect(region, "(eu)|(tr)|(ru)")) {
+  } else if (stringr::str_detect(region, "(eu)|(tr)|(ru)")) {
     output <- "europe"
   } else {
     stop(glue::glue("{region} not defined"))
@@ -89,7 +99,18 @@ check_division <- function(division) {
 
 }
 
-
+#' Check queue input
+#'
+#' @param queue Queue name, acceptable input: RANKED_SOLO_5x5, RANKED_FLEX_SR, RANKED_FLEX_TT
+#'
+#' @export
+check_queue <- function(queue) {
+  if (queue == "RANKED_SOLO_5x5" || queue == "RANKED_FLEX_SR" || queue == "RANKED_FLEX_TT") {
+    return(queue)
+  } else {
+    warning(glue::glue("Incorrect queue name, got: {queue}"))
+  }
+}
 
 
 
