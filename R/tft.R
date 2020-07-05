@@ -1,7 +1,6 @@
 require(R6)
 require(httr)
 require(glue)
-source("./R/misc.R")
 
 # ==== TFT API ==== #
 #' @title R6 Class for Teamfight Tactics end point (TFT)
