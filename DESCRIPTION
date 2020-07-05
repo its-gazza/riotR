@@ -1,5 +1,5 @@
 Package: riotR
-Title: Riot! API wrapper for RR 
+Title: Riot! API Wrapper for R 
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "its-gazza",

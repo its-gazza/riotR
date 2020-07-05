@@ -69,17 +69,12 @@ jobs:
       - name: Check
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
-        shell: Rscript {0}
-
-      - name: Test
-        env:
           RIOT_API: ${{ secrets.RIOT_API }}
           SUMMONER_ACCOUNT: ${{ secrets.SUMMONER_ACCOUNT }}
           SUMMONER_ID: ${{ secrets.SUMMONER_ID }}
           SUMMONER_NAME: ${{ secrets.SUMMONER_NAME }}
           SUMMONER_PUUID: ${{ secrets.SUMMONER_PUUID }}
-        run: testthat::test_dir("tests", reporter = "summary")
+        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
 
       - name: Upload check results
