@@ -1,11 +1,11 @@
 Package: riotR
-Title: What the Package Does (One Line, Title Case)
+Title: Riot! API wrapper for RR 
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "its-gazza",
            role = c("aut", "cre"),
            email = "gary.lkw95@gmail.com")
-Description: What the package does (one paragraph).
+Description: Easy access to Riot! API
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -19,5 +19,4 @@ Depends:
     dplyr,
     purrr
 Suggests: 
-    testthat,
-    devtools
+    testthat
