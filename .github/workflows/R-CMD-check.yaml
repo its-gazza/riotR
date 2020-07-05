@@ -79,7 +79,7 @@ jobs:
           SUMMONER_ID: ${{ secrets.SUMMONER_ID }}
           SUMMONER_NAME: ${{ secrets.SUMMONER_NAME }}
           SUMMONER_PUUID: ${{ secrets.SUMMONER_PUUID }}
-        run: devtools::test()
+        run: test_that::test_dir("tests", reporter = "summary")
         shell: Rscript {0}
 
       - name: Upload check results
