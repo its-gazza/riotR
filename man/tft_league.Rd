@@ -62,7 +62,7 @@ A new `tft` object
 Get challenger league.
 For more info see [here](https://developer.riotgames.com/apis#tft-league-v1/GET_getChallengerLeague)
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{tft_league$challenger(region = self$region)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{tft_league$challenger(region = self$region, dry_run = self$dry_run)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -80,7 +80,7 @@ For more info see [here](https://developer.riotgames.com/apis#tft-league-v1/GET_
 Get grandmaster league.
 For more info see [here](https://developer.riotgames.com/apis#tft-league-v1/GET_getGrandmasterLeague)
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{tft_league$grandmaster(region = self$region)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{tft_league$grandmaster(region = self$region, dry_run = self$dry_run)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -98,7 +98,7 @@ For more info see [here](https://developer.riotgames.com/apis#tft-league-v1/GET_
 Get master league.
 For more info see [here](https://developer.riotgames.com/apis#tft-league-v1/GET_getMasterLeague)
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{tft_league$master(region = self$region)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{tft_league$master(region = self$region, dry_run = self$dry_run)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -115,7 +115,11 @@ For more info see [here](https://developer.riotgames.com/apis#tft-league-v1/GET_
 \subsection{Method \code{by_summoner()}}{
 Search client by
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{tft_league$by_summoner(summonerName = NULL, region = self$region)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{tft_league$by_summoner(
+  summonerName = NULL,
+  region = self$region,
+  dry_run = self$dry_run
+)}\if{html}{\out{</div>}}
 }
 
 }
@@ -124,7 +128,12 @@ Search client by
 \if{latex}{\out{\hypertarget{method-by_tier}{}}}
 \subsection{Method \code{by_tier()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{tft_league$by_tier(tier = NULL, division = NULL, region = self$region)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{tft_league$by_tier(
+  tier = NULL,
+  division = NULL,
+  region = self$region,
+  dry_run = self$dry_run
+)}\if{html}{\out{</div>}}
 }
 
 }
@@ -133,7 +142,7 @@ Search client by
 \if{latex}{\out{\hypertarget{method-by_leagueId}{}}}
 \subsection{Method \code{by_leagueId()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{tft_league$by_leagueId(leagueId, region = self$region)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{tft_league$by_leagueId(leagueId, region = self$region, dry_run = self$dry_run)}\if{html}{\out{</div>}}
 }
 
 }
