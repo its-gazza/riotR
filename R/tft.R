@@ -38,9 +38,9 @@ tft <- R6::R6Class(
       self$api <- api
       self$region <- region
       self$dry_run <- FALSE
-      self$league <- tft_league$new(api = self$api, region = self$region, dry_run = self$dry_run)
-      self$match <- tft_match$new(api = self$api, region = self$region, dry_run = self$dry_run)
-      self$summoner <- tft_summoner$new(api = self$api, region = self$region, dry_run = self$dry_run)
+      self$league <- tft_league$new(api = self$api, dry_run = dry_run, region = self$region)
+      self$match <- tft_match$new(api = self$api, dry_run = dry_run, region = self$region)
+      self$summoner <- tft_summoner$new(api = self$api, dry_run = dry_run, region = self$region)
     }
   )
 )
@@ -85,10 +85,11 @@ tft_league <- R6::R6Class(
     #' For more info see [here](https://developer.riotgames.com/apis#tft-league-v1/GET_getChallengerLeague)
     #'
     #' @param region Region to query. Default to class's region. Can overwrite.
-    challenger = function(region = self$region) {
+    challenger = function(region = self$region, dry_run = self$dry_run) {
       url <- riotR::get_url(
         url = glue::glue("{private$base_url}/challenger") %>% glue,
-        api = self$api)
+        api = self$api,
+        dry_run = dry_run)
       return(url)
     },
 
@@ -98,10 +99,11 @@ tft_league <- R6::R6Class(
     #' For more info see [here](https://developer.riotgames.com/apis#tft-league-v1/GET_getGrandmasterLeague)
     #'
     #' @param region Region to query. Default to class's region. Can overwrite.
-    grandmaster = function(region = self$region) {
+    grandmaster = function(region = self$region, dry_run = self$dry_run) {
       url <- riotR::get_url(
         url = glue::glue("{private$base_url}/grandmaster") %>% glue,
-        api = self$api
+        api = self$api,
+        dry_run = dry_run
       )
       return(url)
     },
@@ -112,10 +114,11 @@ tft_league <- R6::R6Class(
     #' For more info see [here](https://developer.riotgames.com/apis#tft-league-v1/GET_getMasterLeague)
     #'
     #' @param region Region to query. Default to class's region. Can overwrite.
-    master = function(region = self$region) {
+    master = function(region = self$region, dry_run = self$dry_run) {
       url <- riotR::get_url(
         url = glue::glue("{private$base_url}/master") %>% glue,
-        api = self$api
+        api = self$api,
+        dry_run = dry_run
       )
       return(url)
     },
@@ -123,31 +126,34 @@ tft_league <- R6::R6Class(
     # Search by summoner ====
     #' @description
     #' Search client by
-    by_summoner = function(summonerName = NULL, region = self$region) {
+    by_summoner = function(summonerName = NULL, region = self$region, dry_run = self$dry_run) {
       url <- riotR::get_url(
         url = glue::glue("{private$base_url}/entries/by-summoner/{summonerName}") %>% glue,
-        api = self$api
+        api = self$api,
+        dry_run = dry_run
       )
       return(url)
     },
 
     # Search by tier ====
-    by_tier = function(tier = NULL, division = NULL, region = self$region) {
+    by_tier = function(tier = NULL, division = NULL, region = self$region, dry_run = self$dry_run) {
       tier <- check_tier(tier)
       division <- check_division(division)
       url <- riotR::get_url(
         url = glue::glue("{private$base_url}/entries/{tier}/{division}") %>% glue,
-        api = self$api
+        api = self$api,
+        dry_run = dry_run
       )
 
       return(url)
     },
 
     # Search by leagueId ====
-    by_leagueId = function(leagueId, region = self$region) {
+    by_leagueId = function(leagueId, region = self$region, dry_run = self$dry_run) {
       url <- riotR::get_url(
         url = glue::glue("{private$base_url}/leagues/{leagueId}") %>% glue,
-        api = self$api
+        api = self$api,
+        dry_run = dry_run
       )
       return(url)
     }
@@ -178,21 +184,23 @@ tft_match <- R6::R6Class(
 
     # ---- Methods ---- #
     # Search by tier ====
-    by_puuid = function(puuid, region = self$region) {
+    by_puuid = function(puuid, region = self$region, dry_run = self$dry_run) {
       region <- route_tft(region)
       url <- riotR::get_url(
         url = glue::glue("{private$base_url}/by-puuid/{puuid}/ids") %>% glue,
-        api = self$api
+        api = self$api,
+        dry_run = dry_run
       )
       return(url)
     },
 
     # Search by match ID
-    by_matchId = function(matchId, region = self$region) {
+    by_matchId = function(matchId, region = self$region, dry_run = self$dry_run) {
       region <- route_tft(region)
       url <- riotR::get_url(
         url = glue::glue("{private$base_url}/{matchId}") %>% glue,
-        api = self$api
+        api = self$api,
+        dry_run = dry_run
       )
 
       return(url)
@@ -223,38 +231,42 @@ tft_summoner <- R6::R6Class(
 
     # ---- Methods ---- #
     # Search by account id ====
-    by_account = function(encryptedAccountId, region = self$region) {
+    by_account = function(encryptedAccountId, region = self$region, dry_run = self$dry_run) {
       url <- riotR::get_url(
         url = glue::glue("{private$base_url}/by-account/{encryptedAccountId}") %>% glue,
-        api = self$api
+        api = self$api,
+        dry_run = dry_run
       )
       return(url)
     },
 
     # Search by summoner name
-    by_name = function(summonerName, region = self$region) {
+    by_name = function(summonerName, region = self$region, dry_run = self$dry_run) {
       base_url <- glue::glue("{private$base_url}")
       url <- get_url(
         url = glue::glue("{private$base_url}/by-name/{summonerName}") %>% glue,
-        api = self$api
+        api = self$api,
+        dry_run = dry_run
       )
       return(url)
     },
 
     # Sarch by puuid
-    by_puuid = function(encryptedPUUID, region = self$region) {
+    by_puuid = function(encryptedPUUID, region = self$region, dry_run = self$dry_run) {
       url <- riotR::get_url(
         url = glue::glue("{private$base_url}/by-puuid/{encryptedPUUID}") %>% glue,
-        api = self$api
+        api = self$api,
+        dry_run = dry_run
       )
       return(url)
     },
 
     # Search by summoner id
-    by_summonerId = function(encryptedSummonerId, region = self$region) {
+    by_summonerId = function(encryptedSummonerId, region = self$region, dry_run = self$dry_run) {
       url <- riotR::get_url(
         url = glue::glue("{private$base_url}/{encryptedSummonerId}") %>% glue,
-        api = self$api
+        api = self$api,
+        dry_run = dry_run
       )
       return(url)
     }
