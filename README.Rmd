@@ -1,0 +1,64 @@
+---
+title: "riotR"
+output: github_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+require(glue)
+knitr::opts_chunk$set(echo = TRUE)
+RIOT_API <- Sys.getenv("RIOT_API")
+```
+
+<!-- badges: start -->
+  [![R build status](https://github.com/its-gazza/RiotR/workflows/R-CMD-check/badge.svg)](https://github.com/its-gazza/RiotR/actions)
+<!-- badges: end -->
+
+`riotR` is a API wrapper for the [Riot Games API][riot api]. Current it supports the League of Legends and Teamfight Tactics end points.  
+
+All functions are made to mimic riot's API end point. For example, If I want to get a list of challengers in the OCE region, 
+which has an end point of `/lol/league/v4/challengerleagues/by-queue/{queue}`,
+you can access this end point with the following:
+
+```{r, eval=FALSE}
+challenger <- riotR::league$new(api = "YOUR API", region = "oc1")$league$challenger(queue = "RANKED_SOLO_5x5")
+```
+
+Note all additional parameter required (e.g. queue from example above) will need to be supplied
+
+## Install
+You can install `riotR` with the following:  
+
+```{r install, eval = FALSE}
+remotes::install_github("its-gazza/riotR")
+```
+
+You need an API from Riot to use this package. You can get it from [here][api key]
+
+## Example
+
+```{r tft example, message = FALSE, eval = FALSE}
+require(riotR)
+
+# Get a list of grandmaster players
+tft <- riotR::tft$new(api = RIOT_API, region = "oc1", dry_run = FALSE)
+grandmaster <- tft$league$grandmaster()
+grandmaster <- httr::content(grandmaster)
+grandmaster_tibble <- do.call(rbind, grandmaster$entries)
+head(grandmaster_tibble)
+```
+
+Alternatively, you can specify `dry_run` to `TRUE` so all return type is the url instead of 
+calling riot's API service
+
+```{r dry run example, message = FALSE}
+RIOT_API <- "YOUR_RIOT_API"
+tft <- riotR::tft$new(api = RIOT_API, region = "oc1", dry_run = TRUE)
+print(tft$league$grandmaster())
+```
+
+
+<!-- Markdown links -->
+[riot api]: https://developer.riotgames.com/apis
+[api key]: https://developer.riotgames.com/
