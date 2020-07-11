@@ -251,7 +251,6 @@ league_summoner <- R6::R6Class(
 
     # Search by summoner name
     by_name = function(summonerName, region = self$region, dry_run = self$dry_run) {
-      base_url <- glue::glue("{private$base_url}")
       url <- get_url(
         url = glue::glue("{private$base_url}/by-name/{summonerName}") %>% glue,
         api = self$api,
