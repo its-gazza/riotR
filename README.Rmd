@@ -56,6 +56,10 @@ calling riot's API service
 RIOT_API <- "YOUR_RIOT_API"
 tft <- riotR::tft$new(api = RIOT_API, region = "oc1", dry_run = TRUE)
 print(tft$league$grandmaster())
+
+# Or you can call dry_run in that particular method
+tft <- riotR::tft$new(api = RIOT_API, region = "oc1", dry_run = FALSE)
+print(tft$league$grandmaster(dry_run = TRUE))
 ```
 
 

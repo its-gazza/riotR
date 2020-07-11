@@ -58,4 +58,12 @@ print(tft$league$grandmaster())
 
     ## [1] "https://oc1.api.riotgames.com/tft/league/v1/grandmaster?api_key=YOUR_RIOT_API"
 
+``` r
+# Or you can call dry_run in that particular method
+tft <- riotR::tft$new(api = RIOT_API, region = "oc1", dry_run = FALSE)
+print(tft$league$grandmaster(dry_run = TRUE))
+```
+
+    ## [1] "https://oc1.api.riotgames.com/tft/league/v1/grandmaster?api_key=YOUR_RIOT_API"
+
 <!-- Markdown links -->
