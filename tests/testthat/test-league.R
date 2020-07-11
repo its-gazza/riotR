@@ -1,16 +1,28 @@
 RIOT_API <- Sys.getenv("RIOT_API")
-SUMMONER_NAME <- Sys.getenv("SUMMONER_NAME")
-SUMMONER_PUUID <- Sys.getenv("SUMMONER_PUUID")
-SUMMONER_ACCOUNT <- Sys.getenv("SUMMONER_ACCOUNT")
-SUMMONER_ID <- Sys.getenv("SUMMONER_ID")
 
 context("League")
+
+
+if(!riotR::check_api(RIOT_API, "league")) {
+  skip("Invalid API")
+}
+
+# Get user credentials
+summoner <- riotR::get_user_id("itsgazza", "oc1", RIOT_API)
+SUMMONER_NAME <- summoner$name
+SUMMONER_PUUID <- summoner$puuid
+SUMMONER_ACCOUNT <- summoner$accountId
+SUMMONER_ID <- summoner$id
 
 if (SUMMONER_NAME == "" | SUMMONER_PUUID == "" | SUMMONER_ACCOUNT == "") {
   skip("One of the variable is missing")
 }
 
-if(!riotR::check_api(RIOT_API)) {
+if (SUMMONER_NAME == "" | SUMMONER_PUUID == "" | SUMMONER_ACCOUNT == "") {
+  skip("One of the variable is missing")
+}
+
+if(!riotR::check_api(RIOT_API, "league")) {
   skip("Invalid API")
 }
 
