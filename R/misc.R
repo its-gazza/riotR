@@ -116,13 +116,54 @@ check_queue <- function(queue) {
 #' Check if api key is valid
 #'
 #' @param api Riot API
+#' @param game Game to test API on. Note development key will work on any game
+#' but production key might be limited your focused game. Acceptable input:
+#' tft, league, any
 #'
 #' @export
-check_api <- function(api) {
-  data <- httr::GET(glue::glue("https://oc1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key={api}"))
+check_api <- function(api, game = "any") {
+  game <- tolower(game)
+
+  if (game == "league") {
+    data <- httr::GET(glue::glue("https://oc1.api.riotgames.com/lol/status/v3/shard-data?api_key={api}"))
+  } else if (game == "tft") {
+    data <- httr::GET(glue::glue("https://oc1.api.riotgames.com/tft/league/v1/challenger?api_key={api}"))
+  } else {
+    data <- httr::GET(glue::glue("https://oc1.api.riotgames.com/lol/platform/v3/champion-rotations?api_key={api}"))
+  }
+
   if (data$status_code != 200) {
     return(FALSE)
   } else {
     return(TRUE)
   }
+}
+
+#' Get user's id
+#'
+#' @param name User name
+#' @param api Riot API
+#' @param region User's region
+#' @param game Gamemode. Acceptable input: tft, league, any. Default to any
+#'
+#' @export
+get_user_id <- function(name, region, api, game = "any") {
+  # Make sure API is valid
+  if(!check_api(api, game)) {
+    stop("Invalid API")
+  }
+
+  # Get data base on input
+  if (game == "league" | game == "any") {
+    data <- httr::GET(glue::glue("https://{region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/{name}?api_key={api}"))
+  } else if (game == "tft") {
+    data <- httr::GET(glue::glue("https://{region}.api.riotgames.com/tft/summoner/summoners/by-name/{name}?api_key={api}"))
+  } else {
+    stop(glue::glue("invalid game input, got: {game}"))
+  }
+
+  # Sanity check
+  if (data$status_code != 200) {stop(glue::glue("Cannot access data, error: {content(data)}"))}
+
+  return(httr::content(data))
 }

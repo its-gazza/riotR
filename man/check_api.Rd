@@ -4,10 +4,14 @@
 \alias{check_api}
 \title{Check if api key is valid}
 \usage{
-check_api(api)
+check_api(api, game = "any")
 }
 \arguments{
 \item{api}{Riot API}
+
+\item{game}{Game to test API on. Note development key will work on any game
+but production key might be limited your focused game. Acceptable input:
+tft, league, any}
 }
 \description{
 Check if api key is valid
