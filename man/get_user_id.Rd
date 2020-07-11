@@ -9,6 +9,8 @@ get_user_id(name, region, api, game = "any")
 \arguments{
 \item{name}{User name}
 
+\item{region}{User's region}
+
 \item{api}{Riot API}
 
 \item{game}{Gamemode. Acceptable input: tft, league, any. Default to any}
